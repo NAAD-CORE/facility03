@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Facility-03</title>
+  <link rel="icon" type="image/x-icon" href="icon.png">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Courier New', monospace;
+    }
+
+    body {
+      background-color: #f0f4f8; /* soft white-blue background */
+      color: #111;
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.02),
+        rgba(0, 0, 0, 0.02) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      background-size: 100% 4px;
+      animation: subtleFlow 6s linear infinite;
+    }
+
+    @keyframes subtleFlow {
+      from { background-position: 0 0; }
+      to { background-position: 0 80px; }
+    }
+
+    .background-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 400px;
+      height: 400px;
+      background-image: url('AN_logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      transform: translate(-50%, -50%);
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 0;
+      filter: grayscale(1) brightness(1.2);
+    }
+
+    .terminal-box {
+      background-color: #ffffff;
+      border: 1px solid #4a90e2; /* blue border */
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 500px;
+      box-shadow: 0 0 25px rgba(74,144,226,0.3); /* soft blue glow */
+      z-index: 1;
+      text-align: center;
+    }
+
+    .terminal-box h1 {
+      font-size: 22px;
+      text-transform: uppercase;
+      color: #007bff; /* dark blue-black */
+      margin-bottom: 10px;
+    }
+
+    .console-output {
+      background-color: #eaf1fb; /* very light blue */
+      border: 1px solid #c3daf7;
+      padding: 15px;
+      margin: 20px 0;
+      text-align: center;
+      border-radius: 6px;
+    }
+
+    .console-output img {
+      width: 100%;
+      border-radius: 6px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #4a90e2;
+      color: #0d1b2a;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      background: #4a90e2;
+      border: 1px solid #007bff;
+      padding: 10px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+      border-radius: 4px;
+      margin-bottom: 5px;
+    }
+
+    button:hover {
+      background-color: #ffffff;
+      color: #4a90e2;
+    }
+
+    #helpBtn {
+      font-size: 12px;
+      border: none;
+      background: none;
+      color: #4a90e2;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    #contentPage {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #f0f4f8; /* match body background */
+    }
+
+    .content-wrapper {
+      display: flex;
+      height: 100%;
+      width: 100%;
+    }
+
+    .doc-list {
+      width: 20%;
+      background-color: #ffffff;
+      border-right: 1px solid #abd2ff;
+      overflow-y: auto;
+      padding: 10px;
+
+      /* Keep scrolling but hide scrollbar */
+      scrollbar-width: none;      /* Firefox */
+      -ms-overflow-style: none;   /* IE/Edge */
+    }
+
+    .doc-list::-webkit-scrollbar {
+      display: none;              /* Chrome, Safari, Opera */
+    }
+
+    .doc-item {
+      cursor: pointer;
+      padding: 8px;
+      margin-bottom: 5px;
+      border: 1px solid transparent;
+      color: #0d1b2a;
+      transition: background-color 0.2s, border 0.2s;
+    }
+
+    .doc-item:hover {
+      background-color: #c3daf7;
+      border: 1px solid #4a90e2;
+    }
+
+    .doc-category {
+      font-weight: bold;
+      margin-top: 10px;
+      color: #0d1b2a;
+    }
+
+    .doc-viewer {
+      flex-grow: 1;
+      background-color: #ffffff; /* white content background */
+      overflow: hidden;
+      position: relative;
+      border-left: 2px solid #4a90e2;
+    }
+
+    iframe.doc-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      background: #ffffff;
+    }
+
+    iframe.doc-frame.visible {
+      opacity: 1;
+    }
+
+    hr {
+      border: 0.5px solid #4a90e2;
+      margin: 10px 0;
+    }
+
+    .footer-text {
+      font-size: 10px;
+      color: #555;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-image"></div>
+
+  <!-- Login Page -->
+  <div class="terminal-box" id="authPage">
+    <h1>Facility-03 "Black Dagger"</h1>
+    <div class="console-output">
+      <!-- Image placeholder instead of terminal text -->
+      <img src="image.png" alt="Facility Image"><br>
+    </div>
+
+    <input type="text" id="keycode" placeholder="Enter keycode">
+    <button onclick="authenticate()">ACCESS</button>
+    <button id="helpBtn" onclick="requestGuestAccess()">Just a guest? Request C.O.R.E. for temporary access.</button>
+  </div>
+
+  <!-- Documents Page -->
+  <div id="contentPage">
+    <div class="content-wrapper">
+      <div class="doc-list" id="docList"></div>
+      <div class="doc-viewer" id="docViewer">
+        <p style="color:#555;text-align:center;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+          Select a document from the left.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const keyHashes = {
+      '90ddc770cd9280f3caf26a6e8dda9d1dda1eb0f4f22ef06303072d53a904275e': [
+        { title: 'Main Information', url: 'https://docs.google.com/document/d/1UPPsdxZIfidxagQFAUmpAWvO5TZLJcHi5MY9w_wRa3Y/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'Anomaly Classification', url: 'https://docs.google.com/document/d/1kQQuO6ICQ71h9XV8Bpy4_zNJjVi7B7mZ-uiG1RsQHSQ/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'AN-4167', url: 'https://docs.google.com/document/d/1trqgbUT5lurjYHTqqDHS0H2B_EAKEsc2PPvxcGXo2a4/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-1231', url: 'https://docs.google.com/document/d/1kKwNe4vRuZdbaZMWE3OTGw9wE17qbWC7eOdHrZSglec/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-601', url: 'https://docs.google.com/document/d/15_fgNaoUcJOevu7bok0qqiMyKxlNUxqJYO7D9C9OAfI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-233', url: 'https://docs.google.com/document/d/1bgS1ujqJtFvebCXBvxHg6EgCjlhH2K05UrgiduovGGs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'Henrich Markus Shepherd', url: 'https://docs.google.com/document/d/1eLm12uJpfjgldz3e6wb70guuUKHlCujT9s-h3aB8z7M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Richard Hendriks', url: 'https://docs.google.com/document/d/1bIwa_PHluj14_2QEGDJ_LgfkuKB9oCUny0z3aeWRC6E/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Brunor Vane', url: 'https://docs.google.com/document/d/1II7pHr_NYxbtxLebJO5B5ybZnGxZb-hkq716awfooN4/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Will Alexander', url: 'https://docs.google.com/document/d/12BrDI3rm4MwmMNFWgHiTpF08YtiJKqOHQDBDxXiOeXI/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Evelyn Winter ', url: 'https://docs.google.com/document/d/1b-LdIHWrKIMR4xgCSlfO4IpE7z4v6TK5fQSmT9mTY0I/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Bob', url: 'https://docs.google.com/document/d/1jj8OlQoeweB1a2TEGbvN9avkxMmvwpsOqbgb640CpPo/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Boleslav Dvorak', url: 'https://docs.google.com/document/d/1KVrzZ1IIhTMss2ou58tKDLLeSVdOeqwI6qzASDjPBpQ/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Norum Silch', url: 'https://docs.google.com/document/d/1ANrlhJQHqCgcuavsKdarWu4HnWepQ1fDszK8cIzJcAE/edit?usp=sharing', category: 'Personnel' },
+
+      ],
+      '0e0da4b0b7fe9c334335d3b256fbe0e1faefd06fc4cabccef0ca52da4a350fd0': [
+        { title: 'Main Information', url: 'https://docs.google.com/document/d/1UPPsdxZIfidxagQFAUmpAWvO5TZLJcHi5MY9w_wRa3Y/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'Anomaly Classification', url: 'https://docs.google.com/document/d/1kQQuO6ICQ71h9XV8Bpy4_zNJjVi7B7mZ-uiG1RsQHSQ/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'AN-4167', url: 'https://docs.google.com/document/d/1trqgbUT5lurjYHTqqDHS0H2B_EAKEsc2PPvxcGXo2a4/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-1231', url: 'https://docs.google.com/document/d/1kKwNe4vRuZdbaZMWE3OTGw9wE17qbWC7eOdHrZSglec/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-601', url: 'https://docs.google.com/document/d/15_fgNaoUcJOevu7bok0qqiMyKxlNUxqJYO7D9C9OAfI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-233', url: 'https://docs.google.com/document/d/1bgS1ujqJtFvebCXBvxHg6EgCjlhH2K05UrgiduovGGs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-029', url: 'https://docs.google.com/document/d/1bc6_M_Ww68tb26_kJQhkeWCAxYAQPh8C1nlaMiayaSI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-4261', url: 'https://docs.google.com/document/d/12ecZ1tCvS5GF5kqEgseGte0q1eJMinRamGPdhAueXRo/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-4514', url: 'https://docs.google.com/document/d/13n1McdCsIQD6588-nJpiUjjWFY3WUr5S7THzeoUYdAs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-331', url: 'https://docs.google.com/document/d/1TwioNfIbXD1v21IFM9zYsPRWkPIBTfOG4uv4FMxX-bI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'Henrich Markus Shepherd', url: 'https://docs.google.com/document/d/1eLm12uJpfjgldz3e6wb70guuUKHlCujT9s-h3aB8z7M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Richard Hendriks', url: 'https://docs.google.com/document/d/1bIwa_PHluj14_2QEGDJ_LgfkuKB9oCUny0z3aeWRC6E/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Brunor Vane', url: 'https://docs.google.com/document/d/1II7pHr_NYxbtxLebJO5B5ybZnGxZb-hkq716awfooN4/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Will Alexander', url: 'https://docs.google.com/document/d/12BrDI3rm4MwmMNFWgHiTpF08YtiJKqOHQDBDxXiOeXI/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Evelyn Winter ', url: 'https://docs.google.com/document/d/1b-LdIHWrKIMR4xgCSlfO4IpE7z4v6TK5fQSmT9mTY0I/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Bob', url: 'https://docs.google.com/document/d/1jj8OlQoeweB1a2TEGbvN9avkxMmvwpsOqbgb640CpPo/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Boleslav Dvorak', url: 'https://docs.google.com/document/d/1KVrzZ1IIhTMss2ou58tKDLLeSVdOeqwI6qzASDjPBpQ/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Norum Silch', url: 'https://docs.google.com/document/d/1ANrlhJQHqCgcuavsKdarWu4HnWepQ1fDszK8cIzJcAE/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Mason K.', url: 'https://docs.google.com/document/d/1f_RaWVV0iwo7wkkkuI-5EDeasszwe5UZu_Vogx0BlvU/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Adrian Henderson', url: 'https://docs.google.com/document/d/1qsJlvEHJb4c-jqFjy1BsdA5NUDyk3Sc6lz4zZzrHhME/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Bronisław Mroczkowski', url: 'https://docs.google.com/document/d/17EymqGoZkyb6i4LASgS3nFypVWGL_SbHhgqbQ86APDc/edit?usp=sharing', category: 'Personnel' },
+        { title: 'James Solomon', url: 'https://docs.google.com/document/d/1rSInXACTy-SHMBP9Dc-iK8EN0or_t2UnNIpDvUq7Nc4/edit?usp=sharing', category: 'Personnel' },
+        { title: 'I. Rowe', url: 'https://docs.google.com/document/d/1TEaNaPya_V8E7INe0cQ-XcrjGp0XSf1mqAf9rNEuHmQ/edit?tab=t.0', category: 'Personnel' },
+      ],
+      '6966a7e0a3aca395d72f24cbdcfc20ebf2adcb0ea3fd5e2f0df77f77d94a07d9': [
+        { title: 'Main Information', url: 'https://docs.google.com/document/d/1UPPsdxZIfidxagQFAUmpAWvO5TZLJcHi5MY9w_wRa3Y/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'Anomaly Classification', url: 'https://docs.google.com/document/d/1kQQuO6ICQ71h9XV8Bpy4_zNJjVi7B7mZ-uiG1RsQHSQ/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'AN-4167', url: 'https://docs.google.com/document/d/1trqgbUT5lurjYHTqqDHS0H2B_EAKEsc2PPvxcGXo2a4/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-1231', url: 'https://docs.google.com/document/d/1kKwNe4vRuZdbaZMWE3OTGw9wE17qbWC7eOdHrZSglec/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-601', url: 'https://docs.google.com/document/d/15_fgNaoUcJOevu7bok0qqiMyKxlNUxqJYO7D9C9OAfI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-233', url: 'https://docs.google.com/document/d/1bgS1ujqJtFvebCXBvxHg6EgCjlhH2K05UrgiduovGGs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-029', url: 'https://docs.google.com/document/d/1bc6_M_Ww68tb26_kJQhkeWCAxYAQPh8C1nlaMiayaSI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-4261', url: 'https://docs.google.com/document/d/12ecZ1tCvS5GF5kqEgseGte0q1eJMinRamGPdhAueXRo/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-4514', url: 'https://docs.google.com/document/d/13n1McdCsIQD6588-nJpiUjjWFY3WUr5S7THzeoUYdAs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-331', url: 'https://docs.google.com/document/d/1TwioNfIbXD1v21IFM9zYsPRWkPIBTfOG4uv4FMxX-bI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-291', url: 'https://docs.google.com/document/d/1dJ00FYPi4N2HnIfjAQrvxCHMzdl-6AxD7xHUQIZwClI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-012', url: 'https://docs.google.com/document/d/14Gomb_rE4xytny0y5FHY0DawUkf-habSp1ubfiMxeK8/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-993', url: 'https://docs.google.com/document/d/1S2u0xSyKDp-_QgplTCwBzekvr51eaM6NtX6RiAF4xPs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-031', url: 'https://docs.google.com/document/d/1Bjg0-oaVy5vRCgsS3qcJVSHkkbEqsFzzZYOnLfhrPLs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-310', url: 'https://docs.google.com/document/d/1v_42Sy7vCk5KQ5gFSB0Yd4gpozc6WOKDqn0sWKX88go/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'Henrich Markus Shepherd', url: 'https://docs.google.com/document/d/1eLm12uJpfjgldz3e6wb70guuUKHlCujT9s-h3aB8z7M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Richard Hendriks', url: 'https://docs.google.com/document/d/1bIwa_PHluj14_2QEGDJ_LgfkuKB9oCUny0z3aeWRC6E/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Brunor Vane', url: 'https://docs.google.com/document/d/1II7pHr_NYxbtxLebJO5B5ybZnGxZb-hkq716awfooN4/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Will Alexander', url: 'https://docs.google.com/document/d/12BrDI3rm4MwmMNFWgHiTpF08YtiJKqOHQDBDxXiOeXI/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Evelyn Winter ', url: 'https://docs.google.com/document/d/1b-LdIHWrKIMR4xgCSlfO4IpE7z4v6TK5fQSmT9mTY0I/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Bob', url: 'https://docs.google.com/document/d/1jj8OlQoeweB1a2TEGbvN9avkxMmvwpsOqbgb640CpPo/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Boleslav Dvorak', url: 'https://docs.google.com/document/d/1KVrzZ1IIhTMss2ou58tKDLLeSVdOeqwI6qzASDjPBpQ/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Norum Silch', url: 'https://docs.google.com/document/d/1ANrlhJQHqCgcuavsKdarWu4HnWepQ1fDszK8cIzJcAE/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Mason K.', url: 'https://docs.google.com/document/d/1f_RaWVV0iwo7wkkkuI-5EDeasszwe5UZu_Vogx0BlvU/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Adrian Henderson', url: 'https://docs.google.com/document/d/1qsJlvEHJb4c-jqFjy1BsdA5NUDyk3Sc6lz4zZzrHhME/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Bronisław Mroczkowski', url: 'https://docs.google.com/document/d/17EymqGoZkyb6i4LASgS3nFypVWGL_SbHhgqbQ86APDc/edit?usp=sharing', category: 'Personnel' },
+        { title: 'James Solomon', url: 'https://docs.google.com/document/d/1rSInXACTy-SHMBP9Dc-iK8EN0or_t2UnNIpDvUq7Nc4/edit?usp=sharing', category: 'Personnel' },
+        { title: 'I. Rowe', url: 'https://docs.google.com/document/d/1TEaNaPya_V8E7INe0cQ-XcrjGp0XSf1mqAf9rNEuHmQ/edit?tab=t.0', category: 'Personnel' },
+        { title: 'John Macnamura', url: 'https://docs.google.com/document/d/1-IHyMSSQJIm4KNGKTElnbzYiLcywFNKB_ahLK7lveL0/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Mark Holgate', url: 'https://docs.google.com/document/d/1M62dbehNnCeBKleNKmorF3rQ_sxtPbDvKVVcyX7eM9U/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Maverick Lampklings', url: 'https://docs.google.com/document/d/1-g1rOnX-3DLLKBxDSiSoHleZa16oT0vq2opJp3s9SYQ/edit?usp=sharing ', category: 'Personnel' },
+        { title: 'Daniel Mercer', url: 'https://docs.google.com/document/d/1r2E_nMSe_wK0ZRFNsH0GUL_IShVWMkPc42v9rh8vqeg/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Sgt R. Bailey', url: 'https://docs.google.com/document/d/1bYAKVezrPiGtiWIUzTrNOv9qWh2NTyk1diEohWlyALo/edit?usp=sharing ', category: 'Personnel' },
+        { title: 'Samuel Clark', url: 'https://docs.google.com/document/d/1PVEPxkEtMbS6c6FmmBZnsaiGuxbalHz_4jSd8m-avHA/edit?usp=sharing', category: 'Personnel' },
+      ],
+      '180d7aabef67b746608a7d007a853f3db523484408dced9181c9069a363df8d8': [
+        { title: 'Main Information', url: 'https://docs.google.com/document/d/1UPPsdxZIfidxagQFAUmpAWvO5TZLJcHi5MY9w_wRa3Y/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'Anomaly Classification', url: 'https://docs.google.com/document/d/1kQQuO6ICQ71h9XV8Bpy4_zNJjVi7B7mZ-uiG1RsQHSQ/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'AN-4167', url: 'https://docs.google.com/document/d/1trqgbUT5lurjYHTqqDHS0H2B_EAKEsc2PPvxcGXo2a4/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-1231', url: 'https://docs.google.com/document/d/1kKwNe4vRuZdbaZMWE3OTGw9wE17qbWC7eOdHrZSglec/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-601', url: 'https://docs.google.com/document/d/15_fgNaoUcJOevu7bok0qqiMyKxlNUxqJYO7D9C9OAfI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-233', url: 'https://docs.google.com/document/d/1bgS1ujqJtFvebCXBvxHg6EgCjlhH2K05UrgiduovGGs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-029', url: 'https://docs.google.com/document/d/1bc6_M_Ww68tb26_kJQhkeWCAxYAQPh8C1nlaMiayaSI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-4261', url: 'https://docs.google.com/document/d/12ecZ1tCvS5GF5kqEgseGte0q1eJMinRamGPdhAueXRo/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-4514', url: 'https://docs.google.com/document/d/13n1McdCsIQD6588-nJpiUjjWFY3WUr5S7THzeoUYdAs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-331', url: 'https://docs.google.com/document/d/1TwioNfIbXD1v21IFM9zYsPRWkPIBTfOG4uv4FMxX-bI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-291', url: 'https://docs.google.com/document/d/1dJ00FYPi4N2HnIfjAQrvxCHMzdl-6AxD7xHUQIZwClI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-012', url: 'https://docs.google.com/document/d/14Gomb_rE4xytny0y5FHY0DawUkf-habSp1ubfiMxeK8/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-993', url: 'https://docs.google.com/document/d/1S2u0xSyKDp-_QgplTCwBzekvr51eaM6NtX6RiAF4xPs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-031', url: 'https://docs.google.com/document/d/1Bjg0-oaVy5vRCgsS3qcJVSHkkbEqsFzzZYOnLfhrPLs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-310', url: 'https://docs.google.com/document/d/1v_42Sy7vCk5KQ5gFSB0Yd4gpozc6WOKDqn0sWKX88go/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-291', url: 'https://docs.google.com/document/d/1dJ00FYPi4N2HnIfjAQrvxCHMzdl-6AxD7xHUQIZwClI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-545', url: 'https://docs.google.com/document/d/16gpk30BiYLXGrP-uRo8eB271EVBCWS5TWtOPC_sba6A/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-096', url: 'https://docs.google.com/document/d/1x23Lp9VXz185eL4OQVk3aNp3EcNIsT7dyNU7ur_XhWU/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-058', url: 'https://docs.google.com/document/d/1ztw9_I5RAELl42zvu7KQ8CjQ5f2gwFndti1Osv5db7c/edit?tab=t.0', category: 'Anomalies' },
+        { title: 'AN-010', url: 'https://docs.google.com/document/d/18rf_QZpu5bed9tv7ppyXoRgabWxmPpdVHA-MCyukbJE/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-821', url: 'https://docs.google.com/document/d/1jy60OcvJwQaYA4mw1KfL5oZO-5kktDjm4NsaAgRROvU/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'Henrich Markus Shepherd', url: 'https://docs.google.com/document/d/1eLm12uJpfjgldz3e6wb70guuUKHlCujT9s-h3aB8z7M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Richard Hendriks', url: 'https://docs.google.com/document/d/1bIwa_PHluj14_2QEGDJ_LgfkuKB9oCUny0z3aeWRC6E/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Brunor Vane', url: 'https://docs.google.com/document/d/1II7pHr_NYxbtxLebJO5B5ybZnGxZb-hkq716awfooN4/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Will Alexander', url: 'https://docs.google.com/document/d/12BrDI3rm4MwmMNFWgHiTpF08YtiJKqOHQDBDxXiOeXI/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Evelyn Winter ', url: 'https://docs.google.com/document/d/1b-LdIHWrKIMR4xgCSlfO4IpE7z4v6TK5fQSmT9mTY0I/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Bob', url: 'https://docs.google.com/document/d/1jj8OlQoeweB1a2TEGbvN9avkxMmvwpsOqbgb640CpPo/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Boleslav Dvorak', url: 'https://docs.google.com/document/d/1KVrzZ1IIhTMss2ou58tKDLLeSVdOeqwI6qzASDjPBpQ/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Norum Silch', url: 'https://docs.google.com/document/d/1ANrlhJQHqCgcuavsKdarWu4HnWepQ1fDszK8cIzJcAE/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Mason K.', url: 'https://docs.google.com/document/d/1f_RaWVV0iwo7wkkkuI-5EDeasszwe5UZu_Vogx0BlvU/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Adrian Henderson', url: 'https://docs.google.com/document/d/1qsJlvEHJb4c-jqFjy1BsdA5NUDyk3Sc6lz4zZzrHhME/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Bronisław Mroczkowski', url: 'https://docs.google.com/document/d/17EymqGoZkyb6i4LASgS3nFypVWGL_SbHhgqbQ86APDc/edit?usp=sharing', category: 'Personnel' },
+        { title: 'James Solomon', url: 'https://docs.google.com/document/d/1rSInXACTy-SHMBP9Dc-iK8EN0or_t2UnNIpDvUq7Nc4/edit?usp=sharing', category: 'Personnel' },
+        { title: 'I. Rowe', url: 'https://docs.google.com/document/d/1TEaNaPya_V8E7INe0cQ-XcrjGp0XSf1mqAf9rNEuHmQ/edit?tab=t.0', category: 'Personnel' },
+        { title: 'John Macnamura', url: 'https://docs.google.com/document/d/1-IHyMSSQJIm4KNGKTElnbzYiLcywFNKB_ahLK7lveL0/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Mark Holgate', url: 'https://docs.google.com/document/d/1M62dbehNnCeBKleNKmorF3rQ_sxtPbDvKVVcyX7eM9U/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Maverick Lampklings', url: 'https://docs.google.com/document/d/1-g1rOnX-3DLLKBxDSiSoHleZa16oT0vq2opJp3s9SYQ/edit?usp=sharing ', category: 'Personnel' },
+        { title: 'Daniel Mercer', url: 'https://docs.google.com/document/d/1r2E_nMSe_wK0ZRFNsH0GUL_IShVWMkPc42v9rh8vqeg/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Sgt R. Bailey', url: 'https://docs.google.com/document/d/1bYAKVezrPiGtiWIUzTrNOv9qWh2NTyk1diEohWlyALo/edit?usp=sharing ', category: 'Personnel' },
+        { title: 'Samuel Clark', url: 'https://docs.google.com/document/d/1PVEPxkEtMbS6c6FmmBZnsaiGuxbalHz_4jSd8m-avHA/edit?usp=sharing', category: 'Personnel' },
+        { title: 'David Wilson', url: 'https://docs.google.com/document/d/1JmFIfTm1JIm9OuVP3-HKZ7OJ3UGhBF0YUq6s5Z4oOKM/edit?usp=sharing ', category: 'Personnel' },
+        { title: 'Yorick Foster', url: 'https://docs.google.com/document/d/1ts0prQC-FfvNUDzJcL3R_zAS6CdDtX5Y1LI1cDZmIbA/edit?tab=t.0  ', category: 'Personnel' },
+        { title: 'James Myers', url: 'https://docs.google.com/document/d/1DBOapU4J-ns3ol8vl-mvKvUg01lV5ItyofX6NO_9Sic/edit?tab=t.0 ', category: 'Personnel' },
+        { title: 'Jason Wright', url: 'https://docs.google.com/document/d/142Pd6nXuELWTtrira6ctJxCPcUTIaIPokunpmn-MD1M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Andrew Richards', url: 'https://docs.google.com/document/d/13-yisu744ytRZcT-BNR6AQoHjE0Znp0Bs8NbcrLTDUg/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Cassian Mercer', url: 'https://docs.google.com/document/d/1rjwX1Imq6esEESquqmSeU91CceiIZFOOFapvwZOOd-M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Eduard H. Reyes', url: 'https://docs.google.com/document/d/1fC20ufGbvfpRcxynSwogGvAzHLokQR4vR1qceEVtf_k/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Pravda Sergeyevna Morozova', url: 'https://docs.google.com/document/d/1KzDBX9DCQF0X9hN9_uY_Yg-wBZD1yphI1PlW3wEs0zc/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Raine Allard', url: 'https://docs.google.com/document/d/1bO9B9QyavTzuknGjN5MxyNWdI-XkQYgNT9gHpEA6NPI/edit?usp=sharing', category: 'Personnel' },
+
+
+      ],
+      'f528805b799de3cb2a1c8fb436ca6e5e6962ff7c797016eacfd90b5458e3e54d': [
+        { title: 'Main Information', url: 'https://docs.google.com/document/d/1UPPsdxZIfidxagQFAUmpAWvO5TZLJcHi5MY9w_wRa3Y/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'Anomaly Classification', url: 'https://docs.google.com/document/d/1kQQuO6ICQ71h9XV8Bpy4_zNJjVi7B7mZ-uiG1RsQHSQ/edit?usp=sharing', category: 'Facility Information' },
+        { title: 'AN-4167', url: 'https://docs.google.com/document/d/1trqgbUT5lurjYHTqqDHS0H2B_EAKEsc2PPvxcGXo2a4/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-1231', url: 'https://docs.google.com/document/d/1kKwNe4vRuZdbaZMWE3OTGw9wE17qbWC7eOdHrZSglec/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-601', url: 'https://docs.google.com/document/d/15_fgNaoUcJOevu7bok0qqiMyKxlNUxqJYO7D9C9OAfI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-233', url: 'https://docs.google.com/document/d/1bgS1ujqJtFvebCXBvxHg6EgCjlhH2K05UrgiduovGGs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-4261', url: 'https://docs.google.com/document/d/12ecZ1tCvS5GF5kqEgseGte0q1eJMinRamGPdhAueXRo/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-4514', url: 'https://docs.google.com/document/d/13n1McdCsIQD6588-nJpiUjjWFY3WUr5S7THzeoUYdAs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-331', url: 'https://docs.google.com/document/d/1TwioNfIbXD1v21IFM9zYsPRWkPIBTfOG4uv4FMxX-bI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-029', url: 'https://docs.google.com/document/d/1bc6_M_Ww68tb26_kJQhkeWCAxYAQPh8C1nlaMiayaSI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-291', url: 'https://docs.google.com/document/d/1dJ00FYPi4N2HnIfjAQrvxCHMzdl-6AxD7xHUQIZwClI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-012', url: 'https://docs.google.com/document/d/14Gomb_rE4xytny0y5FHY0DawUkf-habSp1ubfiMxeK8/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-993', url: 'https://docs.google.com/document/d/1S2u0xSyKDp-_QgplTCwBzekvr51eaM6NtX6RiAF4xPs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-031', url: 'https://docs.google.com/document/d/1Bjg0-oaVy5vRCgsS3qcJVSHkkbEqsFzzZYOnLfhrPLs/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-310', url: 'https://docs.google.com/document/d/1v_42Sy7vCk5KQ5gFSB0Yd4gpozc6WOKDqn0sWKX88go/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-291', url: 'https://docs.google.com/document/d/1dJ00FYPi4N2HnIfjAQrvxCHMzdl-6AxD7xHUQIZwClI/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-545', url: 'https://docs.google.com/document/d/16gpk30BiYLXGrP-uRo8eB271EVBCWS5TWtOPC_sba6A/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-096', url: 'https://docs.google.com/document/d/1x23Lp9VXz185eL4OQVk3aNp3EcNIsT7dyNU7ur_XhWU/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-058', url: 'https://docs.google.com/document/d/1ztw9_I5RAELl42zvu7KQ8CjQ5f2gwFndti1Osv5db7c/edit?tab=t.0', category: 'Anomalies' },
+        { title: 'AN-010', url: 'https://docs.google.com/document/d/18rf_QZpu5bed9tv7ppyXoRgabWxmPpdVHA-MCyukbJE/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-821', url: 'https://docs.google.com/document/d/1jy60OcvJwQaYA4mw1KfL5oZO-5kktDjm4NsaAgRROvU/edit?usp=sharing', category: 'Anomalies' },
+        { title: 'AN-921', url: 'https://docs.google.com/document/d/1pkCf3HQQbek2GsH3rMd5bZ7ngxT6FC8eRwYLgL2fQ8c/edit?tab=t.6ovymo4skfik', category: 'Anomalies' },
+        { title: 'AN-001', url: 'https://docs.google.com/document/d/', category: 'Anomalies' },
+        { title: 'Henrich Markus Shepherd', url: 'https://docs.google.com/document/d/1eLm12uJpfjgldz3e6wb70guuUKHlCujT9s-h3aB8z7M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Richard Hendriks', url: 'https://docs.google.com/document/d/1bIwa_PHluj14_2QEGDJ_LgfkuKB9oCUny0z3aeWRC6E/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Brunor Vane', url: 'https://docs.google.com/document/d/1II7pHr_NYxbtxLebJO5B5ybZnGxZb-hkq716awfooN4/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Will Alexander', url: 'https://docs.google.com/document/d/12BrDI3rm4MwmMNFWgHiTpF08YtiJKqOHQDBDxXiOeXI/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Evelyn Winter ', url: 'https://docs.google.com/document/d/1b-LdIHWrKIMR4xgCSlfO4IpE7z4v6TK5fQSmT9mTY0I/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Bob', url: 'https://docs.google.com/document/d/1jj8OlQoeweB1a2TEGbvN9avkxMmvwpsOqbgb640CpPo/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Boleslav Dvorak', url: 'https://docs.google.com/document/d/1KVrzZ1IIhTMss2ou58tKDLLeSVdOeqwI6qzASDjPBpQ/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Norum Silch', url: 'https://docs.google.com/document/d/1ANrlhJQHqCgcuavsKdarWu4HnWepQ1fDszK8cIzJcAE/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Mason K.', url: 'https://docs.google.com/document/d/1f_RaWVV0iwo7wkkkuI-5EDeasszwe5UZu_Vogx0BlvU/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Adrian Henderson', url: 'https://docs.google.com/document/d/1qsJlvEHJb4c-jqFjy1BsdA5NUDyk3Sc6lz4zZzrHhME/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Bronisław Mroczkowski', url: 'https://docs.google.com/document/d/17EymqGoZkyb6i4LASgS3nFypVWGL_SbHhgqbQ86APDc/edit?usp=sharing', category: 'Personnel' },
+        { title: 'James Solomon', url: 'https://docs.google.com/document/d/1rSInXACTy-SHMBP9Dc-iK8EN0or_t2UnNIpDvUq7Nc4/edit?usp=sharing', category: 'Personnel' },
+        { title: 'I. Rowe', url: 'https://docs.google.com/document/d/1TEaNaPya_V8E7INe0cQ-XcrjGp0XSf1mqAf9rNEuHmQ/edit?tab=t.0', category: 'Personnel' },
+        { title: 'John Macnamura', url: 'https://docs.google.com/document/d/1-IHyMSSQJIm4KNGKTElnbzYiLcywFNKB_ahLK7lveL0/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Mark Holgate', url: 'https://docs.google.com/document/d/1M62dbehNnCeBKleNKmorF3rQ_sxtPbDvKVVcyX7eM9U/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Maverick Lampklings', url: 'https://docs.google.com/document/d/1-g1rOnX-3DLLKBxDSiSoHleZa16oT0vq2opJp3s9SYQ/edit?usp=sharing ', category: 'Personnel' },
+        { title: 'Daniel Mercer', url: 'https://docs.google.com/document/d/1r2E_nMSe_wK0ZRFNsH0GUL_IShVWMkPc42v9rh8vqeg/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Sgt R. Bailey', url: 'https://docs.google.com/document/d/1bYAKVezrPiGtiWIUzTrNOv9qWh2NTyk1diEohWlyALo/edit?usp=sharing ', category: 'Personnel' },
+        { title: 'Samuel Clark', url: 'https://docs.google.com/document/d/1PVEPxkEtMbS6c6FmmBZnsaiGuxbalHz_4jSd8m-avHA/edit?usp=sharing', category: 'Personnel' },
+        { title: 'David Wilson', url: 'https://docs.google.com/document/d/1JmFIfTm1JIm9OuVP3-HKZ7OJ3UGhBF0YUq6s5Z4oOKM/edit?usp=sharing ', category: 'Personnel' },
+        { title: 'Yorick Foster', url: 'https://docs.google.com/document/d/1ts0prQC-FfvNUDzJcL3R_zAS6CdDtX5Y1LI1cDZmIbA/edit?tab=t.0  ', category: 'Personnel' },
+        { title: 'James Myers', url: 'https://docs.google.com/document/d/1DBOapU4J-ns3ol8vl-mvKvUg01lV5ItyofX6NO_9Sic/edit?tab=t.0 ', category: 'Personnel' },
+        { title: 'Jason Wright', url: 'https://docs.google.com/document/d/142Pd6nXuELWTtrira6ctJxCPcUTIaIPokunpmn-MD1M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Andrew Richards', url: 'https://docs.google.com/document/d/13-yisu744ytRZcT-BNR6AQoHjE0Znp0Bs8NbcrLTDUg/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Cassian Mercer', url: 'https://docs.google.com/document/d/1rjwX1Imq6esEESquqmSeU91CceiIZFOOFapvwZOOd-M/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Eduard H. Reyes', url: 'https://docs.google.com/document/d/1fC20ufGbvfpRcxynSwogGvAzHLokQR4vR1qceEVtf_k/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Pravda Sergeyevna Morozova', url: 'https://docs.google.com/document/d/1KzDBX9DCQF0X9hN9_uY_Yg-wBZD1yphI1PlW3wEs0zc/edit?tab=t.0', category: 'Personnel' },
+        { title: 'Raine Allard', url: 'https://docs.google.com/document/d/1bO9B9QyavTzuknGjN5MxyNWdI-XkQYgNT9gHpEA6NPI/edit?usp=sharing', category: 'Personnel' },
+        { title: 'Zdzisław', url: 'https://docs.google.com/document/d/1FEQXm1zDiN5n1sKfpMi8-NOu5GWSCyOwIF0-wMVRbR8/edit?usp=drivesdk', category: 'Personnel' },
+
+
+      ]
+    };
+
+    async function sha256(text) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+        return hashArray
+            .map(b => b.toString(16).padStart(2, "0"))
+            .join("");
+    }
+
+    async function authenticate() {
+        const input = document
+            .getElementById("keycode")
+            .value
+            .trim()
+            .toUpperCase();
+
+        const hash = await sha256(input);
+
+        if (keyHashes.hasOwnProperty(hash)) {
+            showContent(keyHashes[hash]);
+        } else {
+            alert("ACCESS DENIED: Invalid keycode.");
+        }
+    }
+
+    function showContent(docs) {
+        document.getElementById("authPage").style.display = "none";
+        document.getElementById("contentPage").style.display = "block";
+        loadDocs(docs);
+    }
+
+    function loadDocs(docs) {
+        const list = document.getElementById("docList");
+        const viewer = document.getElementById("docViewer");
+
+        list.innerHTML = "";
+        viewer.innerHTML =
+            '<p style="color:#555;text-align:center;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">Select a document from the left.</p>';
+
+        const categories = {};
+
+        docs.forEach(doc => {
+            if (!categories[doc.category])
+                categories[doc.category] = [];
+
+            categories[doc.category].push(doc);
+        });
+
+        const keys = Object.keys(categories);
+
+        keys.forEach((category, index) => {
+
+            const header = document.createElement("div");
+            header.className = "doc-category";
+            header.textContent = category;
+            list.appendChild(header);
+
+            categories[category].forEach(doc => {
+
+                const item = document.createElement("div");
+                item.className = "doc-item";
+                item.textContent = doc.title;
+
+                item.onclick = () => {
+
+                    const frame = document.createElement("iframe");
+                    frame.className = "doc-frame";
+                    frame.src = doc.url;
+
+                    viewer.innerHTML = "";
+                    viewer.appendChild(frame);
+
+                    frame.onload = () => {
+                        frame.classList.add("visible");
+                    };
+                };
+
+                list.appendChild(item);
+
+            });
+
+            if (index < keys.length - 1)
+                list.appendChild(document.createElement("hr"));
+
+        });
+    }
+
+    function requestGuestAccess() {
+
+        const button = document.getElementById("helpBtn");
+
+        let countdown = 15;
+
+        button.disabled = true;
+        button.style.cursor = "default";
+
+        const timer = setInterval(() => {
+
+            button.textContent =
+                `Request sent. Granting temporary access in ${countdown}s...`;
+
+            countdown--;
+
+            if (countdown < 0) {
+
+                clearInterval(timer);
+
+                const firstHash = Object.keys(keyHashes)[0];
+                showContent(keyHashes[firstHash]);
+
+            }
+
+        }, 1000);
+
+    }
+</script>
+</body>
+</html>
