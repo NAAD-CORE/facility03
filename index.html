@@ -12,7 +12,7 @@
     }
 
     body {
-      background-color: #f0f4f8; /* soft white-blue background */
+      background-color: #f0f4f8;
       color: #111;
       margin: 0;
       height: 100vh;
@@ -67,12 +67,12 @@
     .terminal-box h1 {
       font-size: 22px;
       text-transform: uppercase;
-      color: #007bff; /* dark blue-black */
+      color: #007bff;
       margin-bottom: 10px;
     }
 
     .console-output {
-      background-color: #eaf1fb; /* very light blue */
+      background-color: #eaf1fb;
       border: 1px solid #c3daf7;
       padding: 15px;
       margin: 20px 0;
@@ -127,7 +127,7 @@
       width: 100%;
       height: 100vh;
       overflow: hidden;
-      background-color: #f0f4f8; /* match body background */
+      background-color: #f0f4f8;
     }
 
     .content-wrapper {
@@ -143,13 +143,13 @@
       overflow-y: auto;
       padding: 10px;
 
-      /* Keep scrolling but hide scrollbar */
-      scrollbar-width: none;      /* Firefox */
-      -ms-overflow-style: none;   /* IE/Edge */
+      
+      scrollbar-width: none;
+      -ms-overflow-style: none;   
     }
 
     .doc-list::-webkit-scrollbar {
-      display: none;              /* Chrome, Safari, Opera */
+      display: none;
     }
 
     .doc-item {
@@ -174,7 +174,7 @@
 
     .doc-viewer {
       flex-grow: 1;
-      background-color: #ffffff; /* white content background */
+      background-color: #ffffff; 
       overflow: hidden;
       position: relative;
       border-left: 2px solid #4a90e2;
@@ -212,11 +212,11 @@
 <body>
   <div class="background-image"></div>
 
-  <!-- Login Page -->
+
   <div class="terminal-box" id="authPage">
     <h1>Facility-03 "Black Dagger"</h1>
     <div class="console-output">
-      <!-- Image placeholder instead of terminal text -->
+
       <img src="image.png" alt="Facility Image"><br>
     </div>
 
@@ -225,7 +225,7 @@
     <button id="helpBtn" onclick="requestGuestAccess()">Just a guest? Request C.O.R.E. for temporary access.</button>
   </div>
 
-  <!-- Documents Page -->
+
   <div id="contentPage">
     <div class="content-wrapper">
       <div class="doc-list" id="docList"></div>
